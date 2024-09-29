@@ -1,96 +1,98 @@
-const {
-	rudhra,
-	commands,
-	mode
-} = require("../lib/");
-const config = require("../config");
-rudhra({
-	pattern: 'list$',
-	fromMe: mode,
-	dontAddCommandList: true
+const { Rudhra, mode, commands, PREFIX } = require("../lib");
+const { OWNER_NAME, BOT_NAME } = require("../config");
+const { hostname } = require("os");
+
+Rudhra({
+    pattern: 'list$',
+    fromMe: mode,
+    dontAddCommandList: true
 }, async (message, match) => {
-	let msg = ''
-	let no = 1
-	commands.map(async (command) => {
-		if (command.dontAddCommandList === false && command.pattern !== undefined) {
-			msg += `${no++}. ${command.pattern.toString().match(/(\W*)([A-Za-z0-9_ğüşiö ç]*)/)[2].trim()}\n${command.desc}\n\n`
-		}
-	})
-	await message.reply(msg.trim())
-})
-rudhra({
+    let msg = '';
+    let no = 1;
+    for (const command of commands) {
+        if (command.dontAddCommandList === false && command.pattern !== undefined) {
+            msg += `${no++}. ${command.pattern.toString().match(/(\W*)([A-Za-z0-9_ğüşiö ç]*)/)[2].trim()}\n${command.desc}\n\n`;
+        }
+    }
+    await message.reply(msg.trim());
+});
+
+Rudhra({
     pattern: 'help$',
     fromMe: mode,
     dontAddCommandList: true
 }, async (message, match) => {
-    try {
-        const now = new Date();
-        const formattedDate = now.toLocaleDateString();
-        const formattedTime = now.toLocaleTimeString();
+    if (match) {
+      for (let i of commands) {
+        if (
+          i.pattern instanceof RegExp &&
+          i.pattern.test(`${PREFIX}` + match)
+        ) {
+          const cmdName = i.pattern.toString().split(/\W+/)[1];
+          message.reply(`\`\`\`Rudhra: ${PREFIX}${cmdName.trim()}
+Description: ${i.desc}\`\`\``);
+        }
+      }
+    } else {
+      let { prefix } = message;
+      let [date, time] = new Date()
+        .toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
+        .split(",");
+      let menu = `╔═══❮ *${BOT_NAME}* ❯═══•
+║╔═══════════════◉
+║║ *User* : ${message.pushName}
+║║ *Prefix* : ${PREFIX}
+║║ *Server* : ${hostname().split("-")[0]}
+║║ *Date* : ${date}
+║║ *Time* : ${time}
+║║ *Comments* : ${commands.length} 
+║║
+║║    █║▌║▌║║▌║ █
+║║     ʀ   ᴜ   ᴅ   ʜ   ʀ   ᴀ
+║╚═══════════════◉
+╚═════════════════•\n`;
+      let cmnd = [];
+      let cmd;
+      let category = [];
+      commands.map((Rudhra, num) => {
+        if (Rudhra.pattern instanceof RegExp) {
+          cmd = Rudhra.pattern.toString().split(/\W+/)[1];
+        }
 
-        let msg = `\n╭━━━〔 ${config.BOT_NAME} 〕━━━┈
-╭──────────────
-❖ │  *OWNER*: ${config.OWNER_NAME}
-❖ │  *MODE*: ${config.MODE}
-❖ │  *DATE*: ${formattedDate}
-❖ │  *TIME*: ${formattedTime}
-╰──────────────
-╰━━━━━━━━━━━━━━━┈\n\n`;
+        if (!Rudhra.dontAddCommandList && cmd !== undefined) {
+          let type = Rudhra.type ? Rudhra.type.toLowerCase() : "misc";
 
-        commands.forEach(command => {
-            if (!command.dontAddCommandList && command.pattern) {
-                const patternMatch = String(command.pattern).match(/(\W*)([A-Za-z0-9_ğüşiö ç]*)/);
-                if (patternMatch) {
-                    msg += `❖ ${patternMatch[2].trim()}\n${command.desc}\n\n`;
-                }
-            }
+          cmnd.push({ cmd, type });
+
+          if (!category.includes(type)) category.push(type);
+        }
+      });
+      cmnd.sort();
+      category.sort().forEach((cmmd) => {
+        menu += `╔╔══❮ *${cmmd.toUpperCase()}* ❯`;
+        let comad = cmnd.filter(({ type }) => type == cmmd);
+        comad.forEach(({ cmd }) => {
+          menu += `\n║║  ${PREFIX} ${cmd.trim()} `;
         });
-
-        let rudh = {
-            key: {
-                participant: "0@s.whatsapp.net",
-                remoteJid: "120363236701315506@g.us"
-            },
-            message: {
-                productMessage: {
-                    product: {
-                        productImage: {
-                            mimetype: "image/jpeg",
-                            jpegThumbnail: Buffer.alloc(0)
-                        },
-                        title: "Command List",
-                        description: "List of available commands",
-                        currencyCode: "USD",
-                        priceAmount1000: "100000000000000",
-                        retailerId: "Rudh",
-                        productImageCount: 1
-                    },
-                    businessOwnerJid: "919895809960@s.whatsapp.net"
-                }
-            }
-        };
-
-        return await message.sendFromUrl(config.MENU_URL, {
-            fileLength: "5555544444",
-            gifPlayback: true,
-            contextInfo: {
-                externalAdReply: {
+        menu += `\n`;
+      });
+        menu += `\n║║`;
+      menu += `\n║╚═══════════⭓`;
+      menu += `\n╚══════════════◉`;
+      return await  message.send(menu, {
+    contextInfo: {
+externalAdReply: {
                     title: config.BOT_NAME,
                     body: config.OWNER_NAME,
-                    sourceUrl: "https://github.com/princerudh/rudhra-bot",
+                    sourceUrl: "https://github.com/princerudh/rudhra-md",
                     mediaUrl: "https://instagram.com",
                     mediaType: 1,
                     showAdAttribution: true,
                     renderLargerThumbnail: false,
                     thumbnailUrl: "https://raw.githubusercontent.com/rudhra-prh/media/refs/heads/main/image/botra.png"
                 }
-            },
-            caption: msg
-        }, {
-            quoted: rudh
-        });
-
-    } catch (error) {
-        console.error('Error occurred:', error);
+    },
+  });
     }
-});
+  }
+);

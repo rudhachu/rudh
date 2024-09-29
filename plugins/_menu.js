@@ -17,7 +17,7 @@ rudhra({
     await setMenuType(message, match);
 });
 
-const pluginTypes = ['AnimeImage', 'downloader', 'info', 'whatsapp', 'group', 'media', 'AnimeVideo', 'user', 'generator'];
+const pluginTypes = ['downloader', 'info', 'whatsapp', 'group', 'media', 'AnimeVideo', 'user', 'help'];
 
 pluginTypes.forEach((type) => {
     rudhra({
