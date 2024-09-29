@@ -23,7 +23,7 @@ module.exports = {
   ADMIN_COMMANDS: toBool(process.env.ADMIN_COMMANDS),
   AUTHOR: process.env.AUTHOR || "Ƥ ʀ ɪ ɴ ᴄ ᴇ  Ʀ ᴜ ᴅ ʜ",
   AUDIO_DATA: process.env.AUDIO_DATA || "Ʀ ᴜ ᴅ ʜ ʀ λ;Ƥ ʀ ɪ ɴ ᴄ ᴇ  Ʀ ᴜ ᴅ ʜ;https://raw.githubusercontent.com/rudhra-prh/media/main/image/rudhra2.jpg",
-  BOT_NAME: process.env.BOT_NAME || "ʀᴜᴅʜʀᴀ ʙᴏᴛ",
+  BOT_NAME: process.env.BOT_NAME || "Ʀᴜᴅʜʀᴀ ʙᴏᴛ",
   CAPTION: process.env.CAPTION || "ʀᴜᴅʜʀᴀ ʙᴏᴛ",
   DELETED_LOG_CHAT: process.env.DELETED_LOG_CHAT || false,
   ERROR_MSG: toBool(process.env.ERROR_MSG) || true,
