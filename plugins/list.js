@@ -1,8 +1,8 @@
-const { Rudhra, mode, commands, PREFIX } = require("../lib");
+const { rudhra, mode, commands, PREFIX } = require("../lib");
 const { OWNER_NAME, BOT_NAME } = require("../config");
 const { hostname } = require("os");
 
-Rudhra({
+rudhra({
     pattern: 'list$',
     fromMe: mode,
     dontAddCommandList: true
@@ -17,7 +17,7 @@ Rudhra({
     await message.reply(msg.trim());
 });
 
-Rudhra({
+rudhra({
     pattern: 'help$',
     fromMe: mode,
     dontAddCommandList: true
@@ -29,7 +29,7 @@ Rudhra({
           i.pattern.test(`${PREFIX}` + match)
         ) {
           const cmdName = i.pattern.toString().split(/\W+/)[1];
-          message.reply(`\`\`\`Rudhra: ${PREFIX}${cmdName.trim()}
+          message.reply(`\`\`\`rudhra: ${PREFIX}${cmdName.trim()}
 Description: ${i.desc}\`\`\``);
         }
       }
@@ -54,13 +54,13 @@ Description: ${i.desc}\`\`\``);
       let cmnd = [];
       let cmd;
       let category = [];
-      commands.map((Rudhra, num) => {
-        if (Rudhra.pattern instanceof RegExp) {
-          cmd = Rudhra.pattern.toString().split(/\W+/)[1];
+      commands.map((rudhra, num) => {
+        if (rudhra.pattern instanceof RegExp) {
+          cmd = rudhra.pattern.toString().split(/\W+/)[1];
         }
 
-        if (!Rudhra.dontAddCommandList && cmd !== undefined) {
-          let type = Rudhra.type ? Rudhra.type.toLowerCase() : "misc";
+        if (!rudhra.dontAddCommandList && cmd !== undefined) {
+          let type = rudhra.type ? rudhra.type.toLowerCase() : "misc";
 
           cmnd.push({ cmd, type });
 
@@ -84,7 +84,7 @@ Description: ${i.desc}\`\`\``);
 externalAdReply: {
                     title: config.BOT_NAME,
                     body: config.OWNER_NAME,
-                    sourceUrl: "https://github.com/princerudh/rudhra-md",
+                    sourceUrl: "https://github.com/princerudh/rudhra-bot",
                     mediaUrl: "https://instagram.com",
                     mediaType: 1,
                     showAdAttribution: true,
