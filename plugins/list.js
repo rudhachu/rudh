@@ -1,4 +1,5 @@
-const { rudhra, commands, mode } = require("../lib/");
+const { rudhra, mode, commands, PREFIX } = require("../lib");
+const { OWNER_NAME, BOT_NAME } = require("../config");
 const config = require("../config");
 const { hostname } = require("os");
 
