@@ -1,5 +1,5 @@
 const config = require("../config");
-const { rudhra, mode, toAudio,blackVideo, getFfmpegBuffer, audioCut, videoTrim,  AddMp3Meta,g etBuffer } = require("../lib/");
+const { rudhra, mode, toAudio,blackVideo, getFfmpegBuffer, audioCut, videoTrim,  AddMp3Meta, getBuffer } = require("../lib/");
 const fs = require('fs');
 rudhra(
   {
