@@ -7,10 +7,10 @@ rudhra({
     desc: 'Download Instagram Media.',
     type: 'downloader'
 }, async (message, match, client) => {
-    const insta = match.trim();
+    const insta = match || message.reply_message.text;
 
-    if (!insta) { 
-        await message.reply("Where is the URL?");
+    if (!insta) {
+        return await message.reply('Where is the URL?');
         return;
     }
 
