@@ -20,7 +20,7 @@ DEBUG = process.env.DEBUG === undefined ? false : convertToBool(process.env.DEBU
 // Export configuration variables
 module.exports = {
   BRANCH: "main",
-  ADMIN_COMMANDS: toBool(process.env.ADMIN_COMMANDS),
+  ADMIN_ACCESS: toBool(process.env.ADMIN_ACCESS) || true,
   AUTHOR: process.env.AUTHOR || "Ƥ ʀ ɪ ɴ ᴄ ᴇ  Ʀ ᴜ ᴅ ʜ",
   AUDIO_DATA: process.env.AUDIO_DATA || "Ʀ ᴜ ᴅ ʜ ʀ λ;Ƥ ʀ ɪ ɴ ᴄ ᴇ  Ʀ ᴜ ᴅ ʜ;https://raw.githubusercontent.com/rudhra-prh/media/main/image/rudhra2.jpg",
   BOT_NAME: process.env.BOT_NAME || "Ʀᴜᴅʜʀᴀ ʙᴏᴛ",
