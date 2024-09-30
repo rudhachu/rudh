@@ -1,5 +1,5 @@
 const config = require("../config");
-const { rudhra, mode, toAudio,blackVideo,getFfmpegBuffer,audioCut,videoTrim } = require("../lib/");
+const { rudhra, mode, toAudio,blackVideo, getFfmpegBuffer, audioCut, videoTrim,  AddMp3Meta,g etBuffer } = require("../lib/");
 const fs = require('fs');
 rudhra(
   {
@@ -23,16 +23,29 @@ rudhra(
   type: "media",
 }, async (message, match) => {
   try {
-    let buff = await message.quoted.download("buffer");
-    console.log(typeof buff);
-    buff = await toAudio(buff, "mp3");
-    console.log(typeof buff);
-    return await message.sendMessage(
-      message.jid,
-      buff,
-      { mimetype: "audio/mpeg" },
-      "audio"
-    );
+   let media = await toAudio(await message.quoted.download("buffer"));
+    
+    let matchParts = match ? match.match(/[^,;]+/g) : [];
+    let configParts = config.AUDIO_DATA.match(/[^,;]+/g);
+    
+    let url = matchParts[2] ? matchParts[2] : (configParts[2] ? configParts[2] : '');
+    let cover = await getBuffer(url); 
+
+    let title = matchParts[0] ? matchParts[0] : (configParts[0] ? configParts[0] : config.AUDIO_DATA);
+    let artist = matchParts[1] ? matchParts[1] : (configParts[1] ? configParts[1] : config.AUDIO_DATA);
+    artist = [artist]; // Ensure artist is an array
+
+    const res = await AddMp3Meta(media, cover, {
+      title: title,
+      artist: artist
+    });
+
+    return await message.client.sendMessage(message.jid, {
+      audio: res,
+      mimetype: "audio/mpeg"
+    }, {
+      quoted: message.data
+    });
   } catch (error) {
     console.error("Error:", error);
     return await message.send("An error occurred while processing your request.");
