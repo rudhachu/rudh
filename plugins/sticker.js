@@ -20,10 +20,10 @@ rudhra(
       return await message.reply("Reply to photo/video/text");
 
     let buff = await message.quoted.download("buffer");
-    await message.sendMessage(
+    message.sendMessage(
       message.jid,
       buff,
-      { packname: config.PACKNAME, author: config.AUTHOR },
+      { packname: config.STICKER_DATA.split(";")[0], author: config.STICKER_DATA.split(";")[1], },
       "sticker"
     );
   }
@@ -71,17 +71,17 @@ rudhra({
       exif = {
         author: splitMatch[1] ? splitMatch[1] : "",
         packname: splitMatch[0] ? splitMatch[0] : "",
-        categories: config.STICKER_PACKNAME.split(";")[2] || "",
-        android: "https://github.com/mask-sir/",
-        ios: "https://github.com/mask-sir/"
+        categories: config.STICKER_DATA.split(";")[2] || "",
+        android: "https://github.com/princerudh/",
+        ios: "https://github.com/princerudh/"
       };
     } else {
       exif = {
-        author: config.STICKER_PACKNAME.split(/[,;]/)[1] || "",
-        packname: config.STICKER_PACKNAME.split(/[,;]/)[0] || "",
-        categories: config.STICKER_PACKNAME.split(";")[2] || "",
-        android: "https://github.com/mask-sir/",
-        ios: "https://github.com/mask-sir/"
+        author: config.STICKER_DATA.split(/[,;]/)[1] || "",
+        packname: config.STICKER_DATA.split(/[,;]/)[0] || "",
+        categories: config.STICKER_DATA.split(";")[2] || "",
+        android: "https://github.com/princerudh/",
+        ios: "https://github.com/princerudh/"
       };
     }
     let stickerBuffer = await addExif(q, exif);

@@ -1,4 +1,4 @@
-const { rudhra,mode } = require("../lib/");
+const { rudhra, mode } = require("../lib/");
 const { listall } = require("../lib/fancy");
 
 rudhra(

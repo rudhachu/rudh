@@ -61,14 +61,14 @@ rudhra(
     
     let jids = parsedJid(match);
     for (let i of jids) {
-      const eypz = {
+      const rudh = {
         text: message.quoted ? message.quoted.message : "Replied message",
         contextInfo: {
           isForwarded: false
         }
       };
       
-      await message.forwardMessage(i, message.reply_message.data, eypz);
+      await message.forwardMessage(i, message.reply_message.data, rudh);
     }
   }
 );
