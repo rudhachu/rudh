@@ -1,5 +1,4 @@
-const { rudhra, sleep } = require("../lib/");
-const { isAdmin, parsedJid, isUrl, fromMe } = require("../lib");
+const { rudhra, isAdmin, sleep, parsedJid } = require("../lib/");
 const config = require("../config");
 
 const checkPermissions = async (message) => {
@@ -364,41 +363,4 @@ async (message, match) => {
         console.error("Error kicking user:", error);
         return await message.reply("*_Failed to kick the user_*");
     }
-});
-
-/**
- * antilink
- */
-rudhra(
-  {
-    on: "text",
-    fromMe: false,  
-  },
-  async (message, match) => {
-    try{
-    if (!message.isGroup) return;
-    if (config.ANTILINK)
-      if (isUrl(match)) {
-        await message.reply("_Link detected_");
-        let botadmin = await isAdmin(message.jid, message.user, message.client);
-        let senderadmin = await isAdmin(
-          message.jid,
-          message.participant,
-          message.client
-        );
-        if (botadmin) {
-          if (!senderadmin) {
-            await message.reply(
-              `_Commencing Specified Action :${config.ANTILINK_ACTION}_`
-            );
-            return await message[config.ANTILINK_ACTION]([message.participant]);
-          }
-        } else {
-          return await message.reply("_I'am not admin_");
-        }
-      }
-    } catch (error) {
-      console.error("[Error]:", error);
-    }
-
 });
