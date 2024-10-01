@@ -1,10 +1,5 @@
-const {
-    rudhra,
-    isAdmin,
-    sleep,
-    parsedJid,
-    isUrl
-} = require("../lib/");
+const { rudhra, sleep } = require("../lib/");
+const { isAdmin, parsedJid, isUrl, fromMe } = require("../lib");
 const config = require("../config");
 
 const checkPermissions = async (message) => {
@@ -371,16 +366,20 @@ async (message, match) => {
     }
 });
 
+/**
+ * antilink
+ */
 rudhra(
   {
     on: "text",
-    fromMe: false,
+    fromMe: false,  
   },
   async (message, match) => {
+    try{
     if (!message.isGroup) return;
     if (config.ANTILINK)
       if (isUrl(match)) {
-        await message.reply("*_Link detected_*");
+        await message.reply("_Link detected_");
         let botadmin = await isAdmin(message.jid, message.user, message.client);
         let senderadmin = await isAdmin(
           message.jid,
@@ -395,8 +394,11 @@ rudhra(
             return await message[config.ANTILINK_ACTION]([message.participant]);
           }
         } else {
-          return await message.reply("*_I'm not admin_*");
+          return await message.reply("_I'am not admin_");
         }
       }
-  }
-);
+    } catch (error) {
+      console.error("[Error]:", error);
+    }
+
+});
