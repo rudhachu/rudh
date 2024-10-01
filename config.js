@@ -20,7 +20,7 @@ DEBUG = process.env.DEBUG === undefined ? false : convertToBool(process.env.DEBU
 // Export configuration variables
 module.exports = {
   BRANCH: "main",
-  ADMIN_ACCESS: toBool(process.env.ADMIN_ACCESS) || false,
+  ADMIN_ACCESS: toBool(process.env.ADMIN_ACCESS) || true,
   ANTILINK_ACTION: process.env.ANTI_LINK || "kick",
   ANTILINK: toBool(process.env.ANTI_LINK) || false,
   AUTHOR: process.env.AUTHOR || "Ƥ ʀ ɪ ɴ ᴄ ᴇ  Ʀ ᴜ ᴅ ʜ",
