@@ -2,7 +2,8 @@ const {
     rudhra,
     isAdmin,
     sleep,
-    parsedJid
+    parsedJid,
+    isUrl
 } = require("../lib/");
 const config = require("../config");
 
@@ -369,3 +370,33 @@ async (message, match) => {
         return await message.reply("*_Failed to kick the user_*");
     }
 });
+
+rudhra(
+  {
+    on: "text",
+    fromMe: false,
+  },
+  async (message, match) => {
+    if (!message.isGroup) return;
+    if (config.ANTILINK)
+      if (isUrl(match)) {
+        await message.reply("*_Link detected_*");
+        let botadmin = await isAdmin(message.jid, message.user, message.client);
+        let senderadmin = await isAdmin(
+          message.jid,
+          message.participant,
+          message.client
+        );
+        if (botadmin) {
+          if (!senderadmin) {
+            await message.reply(
+              `_Commencing Specified Action :${config.ANTILINK_ACTION}_`
+            );
+            return await message[config.ANTILINK_ACTION]([message.participant]);
+          }
+        } else {
+          return await message.reply("*_I'm not admin_*");
+        }
+      }
+  }
+);
