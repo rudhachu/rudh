@@ -125,12 +125,12 @@ rudhra(
         jid: message.jid,
         button: [],
         header: {
-          title: "Downloader",
-          subtitle: "WhatsApp Bot",
+          title: "𝗬𝗼𝘂𝗧𝘂𝗯𝗲 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱𝗲𝗿",
+          subtitle: "YouTube Downloader",
           hasMediaAttachment: true, 
         },
         footer: {
-          text: "Choose a download option",
+          text: "ᴄʜᴏᴏsᴇ ᴀ ᴅᴏᴡɴʟᴏᴀᴅ ᴏᴘᴛɪᴏɴ",
         },
         body: {
           text: `*Top 5 results for "${query}":*`,
@@ -147,15 +147,15 @@ rudhra(
           {
             type: "reply",
             params: {
-              display_text: `mp3- ${video.title}`,
-              id: `.yta ${video.url}`,
+              display_text: `Audio ${video.title}`,
+              id: `${PREFIX}yta ${video.url}`,
             },
           },
           {
             type: "reply",
             params: {
-              display_text: `mp4- ${video.title}`,
-              id: `.ytv ${video.url}`,
+              display_text: `Video ${video.title}`,
+              id: `${PREFIX}ytv ${video.url}`,
             },
           }
         );
@@ -197,12 +197,15 @@ rudhra(
         text: formattedMessage,
         contextInfo: {
           mentionedJid: [message.sender],
-          forwardingScore: 1,
-          isForwarded: true,
-          forwardedNewsletterMessageInfo: {
-            newsletterJid: '120363298577467093@newsletter',
-            newsletterName: "Iᴢᴜᴍɪ-ᴠ3",
-            serverMessageId: -1
+          externalAdReply: {
+          title: "𝗬𝗼𝘂𝗧𝘂𝗯𝗲 𝗦𝗲𝗮𝗿𝗰𝗵 𝗥𝗲𝘀𝘂𝗹𝘁𝘀",
+                    body: "ʀᴜᴅʜʀᴀ ʙᴏᴛ",
+                    sourceUrl: "https://youtube.com/princerudh",
+                    mediaUrl: "https://youtube.com",
+                    mediaType: 1,
+                    showAdAttribution: true,
+                    renderLargerThumbnail: false,
+                    thumbnailUrl: "https://raw.githubusercontent.com/rudhra-prh/media/refs/heads/main/image/yts.png"
           }
         }
       };
