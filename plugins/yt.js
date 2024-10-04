@@ -1,4 +1,4 @@
- const {
+const {
   rudhra,
   mode,
   isUrl,
@@ -223,7 +223,7 @@ function formatYouTubeMessage(videos) {
   let message = "*YouTube Search Results:*\n\n";
 
   videos.forEach((video, index) => {
-    message += `${index + 1}. *Title:* ${video.title}\n   *Duration:* ${video.duration}\n   *Link:* ${video.url}\n\n`;
+    message += `*${index + 1},* *Title :* ${video.title}\n   *Duration :* ${video.duration}\n   *Link :* ${video.url}\n\n`;
   });
 
   return message;
