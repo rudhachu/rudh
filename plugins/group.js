@@ -1,4 +1,4 @@
-const { rudhra, isAdmin, sleep, parsedJid } = require("../lib/");
+const { rudhra, mode, isAdmin, sleep, parsedJid } = require("../lib/");
 const config = require("../config");
 
 const checkPermissions = async (message) => {
@@ -268,7 +268,7 @@ async (message, match) => {
 
 rudhra({
     pattern: "mee",
-    fromMe: false,
+    fromMe: mode,
     onlyGroup: false,
     desc: "self tag",
     type: "group",
