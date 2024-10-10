@@ -4,7 +4,7 @@ const fs = require("fs");
 const FormData = require("form-data");
 
 rudhra({
-    pattern: 'curl ?(.*)',
+    pattern: 'url ?(.*)',
     fromMe: mode,
     desc: 'Upload files to Catbox.moe .',
     type: 'generator'
