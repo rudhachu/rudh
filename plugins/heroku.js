@@ -297,10 +297,10 @@ rudhra(
     if (commits.total === 0) {
       await message.reply("_Already on latest version_");
     } else {
-      var updates = "Update Available*\n\n\n Changes:\n```";
+      var updates = "*UPDATE AVAILABLE*\n\n\n Changes:\n```";
       commits["all"].map((commit) => {
         updates +=
-          "🔹 [" +
+          "❒▸ [" +
           commit.date.substring(0, 10) +
           "]: " +
           commit.message +
