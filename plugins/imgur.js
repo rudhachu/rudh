@@ -3,7 +3,7 @@ const axios = require("axios");
 const fs = require("fs");
 const util = require("util");
 rudhra({
-    pattern: 'url ?(.*)',
+    pattern: 'turl ?(.*)',
     fromMe: mode,
     desc: 'Upload files to ImageKit (images) or Telegraph (videos)',
     type: 'generator'
