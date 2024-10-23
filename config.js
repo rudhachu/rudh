@@ -28,7 +28,7 @@ module.exports = {
   BOT_NAME: process.env.BOT_NAME || "Ʀᴜᴅʜʀᴀ ʙᴏᴛ",
   CAPTION: process.env.CAPTION || "ʀᴜᴅʜʀᴀ ʙᴏᴛ",
   DELETED_LOG_CHAT: process.env.DELETED_LOG_CHAT || false,
-  DISABLE_PM: toBool(process.env.DISABLE_PM || "false"),
+  DISABLE_PM: toBool(process.env.DISABLE_PM) || false,
   ERROR_MSG: toBool(process.env.ERROR_MSG) || true,
   HANDLERS: (process.env.PREFIX || '^[.,!]').trim(),
   LANG: process.env.LANGUAGE === undefined ? 'EN' : process.env.LANGUAGE.toUpperCase(),
