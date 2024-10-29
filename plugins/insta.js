@@ -14,7 +14,7 @@ rudhra({
         return;
     }
 
-    const url = `https://api.eypz.c0m.in/aio?url=${insta}`;
+    const url = `https://api-test-ajko.onrender.com/aio?url=${insta}`;
     const rudh = await getJson(url);
     const medias = rudh.medias;
 
