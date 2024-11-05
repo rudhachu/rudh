@@ -7,7 +7,7 @@ rudhra({
     pattern: 'fb ?(.*)',
     fromMe: mode,
     desc: 'Download video from Facebook.',
-    type: 'info'
+    type: 'downloader'
 }, async (message, match) => {
     try {
         if (!match) {
