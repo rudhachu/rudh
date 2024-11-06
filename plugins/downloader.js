@@ -7,9 +7,10 @@ rudhra({
     pattern: 'fb ?(.*)',
     fromMe: mode,
     desc: 'Download video from Facebook.',
-    type: 'downloader'
+    type: 'info'
 }, async (message, match) => {
     try {
+        match = match || message.reply_message.text;
         if (!match) {
             return await message.reply("_Provide a Facebook video URL_");
         }
@@ -71,5 +72,77 @@ rudhra({
     } catch (error) {
         console.error("Caught Error:", error); // Log any caught errors
         return message.error(error + "\n\ncommand: fb", error, "_Error occurred while processing the command!!_");
+    }
+});
+
+rudhra({
+    pattern: 'fbhd ?(.*)',
+    fromMe: mode,
+    desc: 'HD download video from Facebook.',
+    type: 'downloader'
+}, async (message, match) => {
+    try {
+        match = match || message.reply_message.text;
+        if (!match) {
+            return await message.reply("_Provide a Facebook video URL_");
+        }
+
+        const videoUrl = match; // Facebook video URL
+
+        // Call the Facebook downloader API
+        const apiUrl = `https://itzpire.com/download/facebook?url=${encodeURIComponent(videoUrl)}`;
+
+        const response = await axios.get(apiUrl);
+        const data = response.data;
+
+        console.log("API Response:", data); // Log the API response for debugging
+
+        // Check if the API response indicates success and contains an HD video URL
+        if (data.status === "success" && data.data.video_hd) {
+            const videoDownloadUrl = data.data.video_hd; // Extract the HD video URL
+
+            // Download the video file
+            const videoResponse = await axios({
+                url: videoDownloadUrl,
+                method: 'GET',
+                responseType: 'stream'
+            });
+
+            // Create a temporary file path for the video
+            const tempFilePath = path.join(__dirname, `${Date.now()}_hd.mp4`);
+            const writer = fs.createWriteStream(tempFilePath);
+
+            // Pipe the video stream to the file
+            videoResponse.data.pipe(writer);
+
+            // Handle completion of file writing
+            await new Promise((resolve, reject) => {
+                writer.on('finish', resolve);
+                writer.on('error', reject);
+            });
+
+            console.log(`HD Video saved to ${tempFilePath}`);
+
+            // Send the video file to the user in HD quality
+            await message.client.sendMessage(
+                message.jid,
+                {
+                    video: { url: tempFilePath },
+                    fileName: `${Date.now()}_hd.mp4`,
+                    mimetype: "video/mp4"
+                },
+                { quoted: message.data }
+            );
+
+            // Optionally, delete the temporary file after sending
+            fs.unlinkSync(tempFilePath);
+
+        } else {
+            console.log("Error: Could not retrieve the HD video download URL, API response:", data);
+            await message.reply("_Error: Could not retrieve the HD video download URL. Please try again later!_");
+        }
+    } catch (error) {
+        console.error("Caught Error:", error); // Log any caught errors
+        return message.error(error + "\n\ncommand: fbhd", error, "_Error occurred while processing the command!!_");
     }
 });
