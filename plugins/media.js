@@ -16,6 +16,29 @@ rudhra(
     return await message.sendMessage(message.jid, buff, {}, "image");
   }
 );
+rudhra({
+  pattern: "voice",
+  fromMe: mode,
+  desc: "converts video/mp3 to voice note",
+  type: "media",
+}, async (message, match) => {
+  try {
+
+    let buff = await message.quoted.download("buffer");
+    buff = await toAudio(buff, "mp3");
+
+    return await message.sendMessage(
+      message.jid,
+      buff,
+      { mimetype: "audio/mpeg", ptt: true }, // ptt: true for voice note
+      "audio"
+    );
+  } catch (error) {
+    console.error("Error:", error);
+    
+    return await message.sendMessage("An error occurred while processing your request.");
+  }
+});
  rudhra({
   pattern: "mp3",
   fromMe: mode,
