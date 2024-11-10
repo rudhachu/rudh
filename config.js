@@ -12,7 +12,7 @@ function convertToBool(text, fault = 'true') {
 // Function to convert string to boolean
 const toBool = (x) => (x && x.toLowerCase() === 'true') || false;
 global.apiUrl = 'https://api.maskser.me/'
-global.eypzApi = 'https://api.eypz.c0m.in/'
+global.eypzApi = 'https://api.kps.c0m.in/'
 
 // Define the Sequelize instance based on DATABASE_URL
 const DATABASE_URL = process.env.DATABASE_URL === undefined ? './database.db' : process.env.DATABASE_URL;
@@ -45,6 +45,7 @@ module.exports = {
   AUTHOR: process.env.AUTHOR || "Ƥ ʀ ɪ ɴ ᴄ ᴇ  Ʀ ᴜ ᴅ ʜ",
   STICKER_DATA: process.env.STICKER_DATA || "Ʀ ᴜ ᴅ ʜ ʀ λ;Ƥ ʀ ɪ ɴ ᴄ ᴇ  Ʀ ᴜ ᴅ ʜ",
   SUDO: process.env.SUDO || '919895809960',
+  WARN_COUNT:process.env.WARN_COUNT || 4,
   HEROKU_APP_NAME: process.env.HEROKU_APP_NAME || "",
   HEROKU_API_KEY: process.env.HEROKU_API_KEY || "",
   HEROKU: toBool(process.env.HEROKU) || false,
