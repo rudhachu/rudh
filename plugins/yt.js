@@ -100,7 +100,6 @@ rudhra({
     match = match || message.reply_message.text;
     if (!match) return await message.reply("Give me a YouTube link");
     if (!isUrl(match)) return await message.reply("Give me a YouTube link");
-    }
 
     const videoUrl = match;
     try {
