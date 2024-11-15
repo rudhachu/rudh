@@ -98,8 +98,8 @@ rudhra({
     type: 'info'
 }, async (message, match, client) => {
     match = match || message.reply_message.text;
-    if (!match) {
-        return await message.reply('Please provide a YouTube video URL.');
+    if (!match) return await message.reply("Give me a YouTube link");
+    if (!isUrl(match)) return await message.reply("Give me a YouTube link");
     }
 
     const videoUrl = match;
@@ -131,8 +131,8 @@ rudhra({
     type: 'info'
 }, async (message, match, client) => {
     match = match || message.reply_message.text;
-    if (!match) {
-        return await message.reply('Please provide a YouTube video URL.');
+    if (!match) return await message.reply("Give me a YouTube link");
+    if (!isUrl(match)) return await message.reply("Give me a YouTube link");
     }
 
     const videoUrl = match;
