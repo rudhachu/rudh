@@ -91,6 +91,7 @@ rudhra({
         await message.reply('Failed to download video. Please try again later.');
     }
 });
+/*
 rudhra({
     pattern: 'yta ?(.*)',
     fromMe: mode,
@@ -149,6 +150,7 @@ rudhra({
         await message.reply('Failed to download video. Please try again later.');
     }
 });
+*/
 rudhra({
     pattern: 'play ?(.*)',
     fromMe: mode,
