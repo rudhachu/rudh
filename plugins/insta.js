@@ -40,3 +40,38 @@ rudhra({
         await message.reply('_Error fetching media!_');
     }
 });
+
+rudhra({
+    pattern: 'story ?(.*)',
+    fromMe: mode,
+    desc: 'Download Instagram Story',
+    type: 'Downloader'
+}, async (message, match, client) => {
+    const storyUrl = match || message.reply_message.text;
+
+    if (!storyUrl) {
+        return await message.reply('_Enter an Instagram Story URL!_');
+    }
+
+    try {
+        let resi = await getJson(`https://api-aswin-sparky.koyeb.app/api/downloader/story?url=${storyUrl}`);
+        
+        if (!resi || !resi.data || resi.data.length === 0) {
+            return await message.reply('_No media found or invalid URL!_');
+        }
+
+        await message.sendMessage(message.jid, "_Uploading..._", { quoted: message.data });
+
+        for (let media of resi.data) {
+            await message.client.sendMessage(
+                message.jid,
+                { video: { url: media.url }, // Ensure proper format for sending media
+                mimetype: "video/mp4"},
+                { quoted: message.data }
+            );
+        }
+    } catch (error) {
+        console.error('Error fetching media:', error);
+        await message.reply('_Error fetching media!_');
+    }
+});
