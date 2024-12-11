@@ -1,4 +1,5 @@
 const { rudhra, mode } = require("../lib");
+const fetch = require('node-fetch');
 const axios = require('axios');
 const path = require('path');
 const fs = require('fs');
@@ -6,143 +7,74 @@ const fs = require('fs');
 rudhra({
     pattern: 'fb ?(.*)',
     fromMe: mode,
-    desc: 'Download video from Facebook.',
+    desc: 'Download Facebook Videos',
     type: 'downloader'
-}, async (message, match) => {
-    try {
-        match = match || message.reply_message.text;
-        if (!match) {
-            return await message.reply("_Provide a Facebook video URL_");
-        }
+}, async (message, match, client) => {
+    const fbUrl = match || message.reply_message?.text;
 
-        const videoUrl = match; // Facebook video URL
-
-        // Call the Facebook downloader API
-        const apiUrl = `https://itzpire.com/download/facebook?url=${encodeURIComponent(videoUrl)}`;
-
-        const response = await axios.get(apiUrl);
-        const data = response.data;
-
-        console.log("API Response:", data); // Log the API response for debugging
-
-        // Check if the API response indicates success and contains a video download URL
-        if (data.status === "success" && data.data.video_sd) {
-            const videoDownloadUrl = data.data.video_sd; // Extract the video URL from the 'video_sd' field
-
-            // Download the video file
-            const videoResponse = await axios({
-                url: videoDownloadUrl,
-                method: 'GET',
-                responseType: 'stream'
-            });
-
-            // Create a temporary file path for the video
-            const tempFilePath = path.join(__dirname, `${Date.now()}.mp4`);
-            const writer = fs.createWriteStream(tempFilePath);
-
-            // Pipe the video stream to the file
-            videoResponse.data.pipe(writer);
-
-            // Handle completion of file writing
-            await new Promise((resolve, reject) => {
-                writer.on('finish', resolve);
-                writer.on('error', reject);
-            });
-
-            console.log(`Video saved to ${tempFilePath}`);
-
-            // Send the video file to the user in normal quality
-            await message.client.sendMessage(
-                message.jid,
-                {
-                    video: { url: tempFilePath },
-                    fileName: `${Date.now()}.mp4`,
-                    mimetype: "video/mp4"
-                },
-                { quoted: message.data }
-            );
-
-            // Optionally, delete the temporary file after sending
-            fs.unlinkSync(tempFilePath);
-
-        } else {
-            console.log("Error: Could not retrieve the video download URL, API response:", data);
-            await message.reply("*_Error: Could not retrieve the video download URL. Please try again later!_*");
-        }
-    } catch (error) {
-        console.error("Caught Error:", error); // Log any caught errors
-        return message.error(error + "\n\ncommand: fb", error, "_Error occurred while processing the command!!_");
+    if (!fbUrl) {
+        return await message.reply('_Enter a Facebook URL!_');
     }
-});
 
-rudhra({
-    pattern: 'fbhd ?(.*)',
-    fromMe: mode,
-    desc: 'HD download video from Facebook.',
-    type: 'downloader'
-}, async (message, match) => {
+    const apiUrl = `https://api.dorratz.com/fbvideo?url=${fbUrl}`;
     try {
-        match = match || message.reply_message.text;
-        if (!match) {
-            return await message.reply("_Provide a Facebook video URL_");
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+
+        if (!data.result || (!data.result.sd && !data.result.hd)) {
+            return await client.sendMessage(message.jid, { text: "Failed to fetch video. Please ensure the URL is valid." });
         }
 
-        const videoUrl = match; // Facebook video URL
+        // Display download options
+        const optionsText = `*${data.result.title}*\n\n\`\`\`*1.*\`\`\` *SD video*\n\`\`\`*2.*\`\`\` *HD video*\n\n*ʀᴇᴘʟʏ ᴡɪᴛʜ ᴀ ɴᴜᴍʙᴇʀ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ*`;
+        const contextInfoMessage = {
+            text: optionsText,
+            contextInfo: {
+                externalAdReply: {
+                    title: "𝗙𝗮𝗰𝗲𝗯𝗼𝗼𝗸 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱𝗲𝗿",
+                    body: "ʀᴜᴅʜʀᴀ ʙᴏᴛ",
+                    sourceUrl: fbUrl,
+                    mediaUrl: fbUrl,
+                    mediaType: 1,
+                    showAdAttribution: true,
+                    thumbnailUrl: "https://i.imgur.com/ohBQOGf.jpeg"
+                }
+            }
+        };
 
-        // Call the Facebook downloader API
-        const apiUrl = `https://itzpire.com/download/facebook?url=${encodeURIComponent(videoUrl)}`;
+        const sentMsg = await client.sendMessage(message.jid, contextInfoMessage, { quoted: message.data });
 
-        const response = await axios.get(apiUrl);
-        const data = response.data;
+        // Listen for user response
+        client.ev.on('messages.upsert', async (msg) => {
+            const newMessage = msg.messages[0];
 
-        console.log("API Response:", data); // Log the API response for debugging
+            if (
+                newMessage.key.remoteJid === message.jid &&
+                newMessage.message?.extendedTextMessage?.contextInfo?.stanzaId === sentMsg.key.id
+            ) {
+                const userReply = newMessage.message?.conversation || newMessage.message?.extendedTextMessage?.text;
 
-        // Check if the API response indicates success and contains an HD video URL
-        if (data.status === "success" && data.data.video_hd) {
-            const videoDownloadUrl = data.data.video_hd; // Extract the HD video URL
-
-            // Download the video file
-            const videoResponse = await axios({
-                url: videoDownloadUrl,
-                method: 'GET',
-                responseType: 'stream'
-            });
-
-            // Create a temporary file path for the video
-            const tempFilePath = path.join(__dirname, `${Date.now()}_hd.mp4`);
-            const writer = fs.createWriteStream(tempFilePath);
-
-            // Pipe the video stream to the file
-            videoResponse.data.pipe(writer);
-
-            // Handle completion of file writing
-            await new Promise((resolve, reject) => {
-                writer.on('finish', resolve);
-                writer.on('error', reject);
-            });
-
-            console.log(`HD Video saved to ${tempFilePath}`);
-
-            // Send the video file to the user in HD quality
-            await message.client.sendMessage(
-                message.jid,
-                {
-                    video: { url: tempFilePath },
-                    fileName: `${Date.now()}_hd.mp4`,
-                    mimetype: "video/mp4"
-                },
-                { quoted: message.data }
-            );
-
-            // Optionally, delete the temporary file after sending
-            fs.unlinkSync(tempFilePath);
-
-        } else {
-            console.log("Error: Could not retrieve the HD video download URL, API response:", data);
-            await message.reply("_Error: Could not retrieve the HD video download URL. Please try again later!_");
-        }
+                if (userReply === '1' && data.result.sd) {
+                    // Send SD video
+                    await client.sendMessage(
+                        message.jid,
+                        { video: { url: data.result.sd }, mimetype: "video/mp4" },
+                        { quoted: message.data }
+                    );
+                } else if (userReply === '2' && data.result.hd) {
+                    // Send HD video
+                    await client.sendMessage(
+                        message.jid,
+                        { video: { url: data.result.hd }, mimetype: "video/mp4" },
+                        { quoted: message.data }
+                    );
+                } else {
+                    await client.sendMessage(message.jid, { text: "Invalid option or unavailable quality. Please reply with 1 or 2." });
+                }
+            }
+        });
     } catch (error) {
-        console.error("Caught Error:", error); // Log any caught errors
-        return message.error(error + "\n\ncommand: fbhd", error, "_Error occurred while processing the command!!_");
+        console.error(error);
+        await client.sendMessage(message.jid, { text: "An error occurred while fetching the media. Please try again later." });
     }
 });
