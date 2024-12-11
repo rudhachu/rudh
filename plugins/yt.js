@@ -1,4 +1,4 @@
- const {
+const {
   rudhra,
   mode,
   isUrl,
@@ -37,18 +37,18 @@ rudhra({
         const firstVideo = videos[0];
         const videoUrl = firstVideo.url;
 
-        const response = await axios.get(`https://combative-sarine-eypz-god-d4cce0fc.koyeb.app/ytdl?url=${videoUrl}`);
-        const { download_links, title } = response.data;
-        const mp4 = download_links.mp4;
-        await message.reply(`_Downloading ${title}_`);
+        const response = await axios.get(`https://api.tioo.eu.org/download/ytdl?url=${videoUrl}`);
+        const { result, title } = response.data;
+        const mp3 = result.mp3;
+        await message.reply(`_Downloading ${result.title}_`);
         await message.client.sendMessage(
             message.jid,
-            { audio: { url: mp4 }, mimetype: 'audio/mp4' },
+            { audio: { url: mp3 }, mimetype: 'audio/mp4' },
             { quoted: message.data }
           );
           await message.client.sendMessage(
             message.jid,
-            { document: { url: mp4 }, mimetype: 'audio/mpeg', fileName: `${title}.mp3`, caption: `_${title}_` },
+            { document: { url: mp3 }, mimetype: 'audio/mpeg', fileName: `${result.title}.mp3`, caption: `_${result.title}_` },
             { quoted: message.data }
           );
     } catch (error) {
@@ -77,13 +77,13 @@ rudhra({
         const firstVideo = videos[0];
         const videoUrl = firstVideo.url;
 
-        const response = await axios.get(`https://combative-sarine-eypz-god-d4cce0fc.koyeb.app/ytdl?url=${videoUrl}`);
-        const { download_links, title } = response.data;
-        const mp4 = download_links.mp4;
-        await message.reply(`_Downloading ${title}_`);
+        const response = await axios.get(`https://api.tioo.eu.org/download/ytdl?url=${videoUrl}`);
+        const { result, title } = response.data;
+        const mp4 = result.mp4;
+        await message.reply(`_Downloading ${result.title}_`);
         await message.client.sendMessage(
             message.jid,
-            { video: { url: mp4 }, mimetype: 'video/mp4', fileName: `${title}.mp4` },
+            { video: { url: mp4 }, mimetype: 'video/mp4', fileName: `${result.title}.mp4` },
             { quoted: message.data }
         );
     } catch (error) {
@@ -91,7 +91,7 @@ rudhra({
         await message.reply('Failed to download video. Please try again later.');
     }
 });
-/*
+
 rudhra({
     pattern: 'yta ?(.*)',
     fromMe: mode,
@@ -104,18 +104,18 @@ rudhra({
 
     const videoUrl = match;
     try {
-        const response = await axios.get(`https://combative-sarine-eypz-god-d4cce0fc.koyeb.app/ytdl?url=${videoUrl}`);
-        const { download_links, title } = response.data;
-        const mp4 = download_links.mp4;
-        await message.reply(`_Downloading ${title}_`);
+        const response = await axios.get(`https://api.tioo.eu.org/download/ytdl?url=${videoUrl}`);
+        const { result, title } = response.data;
+        const mp3 = result.mp3;
+        await message.reply(`_Downloading ${result.title}_`);
         await message.client.sendMessage(
             message.jid,
-            { audio: { url: mp4 }, mimetype: 'audio/mp4' },
+            { audio: { url: mp3 }, mimetype: 'audio/mp4' },
             { quoted: message.data }
           );
           await message.client.sendMessage(
             message.jid,
-            { document: { url: mp4 }, mimetype: 'audio/mpeg', fileName: `${title}.mp3`, caption: `_${title}_` },
+            { document: { url: mp3 }, mimetype: 'audio/mpeg', fileName: `${result.title}.mp3`, caption: `_${result.title}_` },
             { quoted: message.data }
           );
     } catch (error) {
@@ -136,13 +136,13 @@ rudhra({
 
     const videoUrl = match;
     try {
-        const response = await axios.get(`https://combative-sarine-eypz-god-d4cce0fc.koyeb.app/ytdl?url=${videoUrl}`);
-        const { download_links, title } = response.data;
-        const mp4 = download_links.mp4;
-        await message.reply(`_Downloading ${title}_`);
+        const response = await axios.get(`https://api.tioo.eu.org/download/ytdl?url=${videoUrl}`);
+        const { result, title } = response.data;
+        const mp4 = result.mp4;
+        await message.reply(`_Downloading ${result.title}_`);
         await message.client.sendMessage(
             message.jid,
-            { video: { url: mp4 }, mimetype: 'video/mp4', fileName: `${title}.mp4` },
+            { video: { url: mp4 }, mimetype: 'video/mp4', fileName: `${result.title}.mp4` },
             { quoted: message.data }
         );
     } catch (error) {
@@ -150,7 +150,7 @@ rudhra({
         await message.reply('Failed to download video. Please try again later.');
     }
 });
-*/
+
 rudhra({
     pattern: 'play ?(.*)',
     fromMe: mode,
@@ -179,7 +179,7 @@ rudhra({
         }
     }
 
-    const apiUrl = `https://combative-sarine-eypz-god-d4cce0fc.koyeb.app/ytdl?url=${videoUrl}`;
+    const apiUrl = `https://api.tioo.eu.org/download/ytdl?url=${videoUrl}`;
     try {
         const response = await fetch(apiUrl);
         const data = await response.json();
@@ -230,7 +230,7 @@ rudhra({
                     await client.sendMessage(
                         message.jid,
                         {
-                            audio: { url: data.download_links.mp4 },
+                            audio: { url: data.result.mp3 },
                             mimetype: 'audio/mpeg',
                             fileName: `rudhra-bot.mp3`,
                             contextInfo: { externalAdReply: externalAdReply }
@@ -242,7 +242,7 @@ rudhra({
                     await client.sendMessage(
                         message.jid,
                         {
-                            video: { url: data.download_links.mp4 },
+                            video: { url: data.result.mp4 },
                             mimetype: 'video/mp4',
                             caption: `*Title:* ${data.title}\n*Duration:* ${data.duration} seconds`
                         },
@@ -257,30 +257,29 @@ rudhra({
         await client.sendMessage(message.jid, { text: "An error occurred while fetching media. Please try again." });
     }
 });
-rudhra(
-  {
-    pattern: "yts ?(.*)",
-    fromMe: mode,
-    desc: "Search YouTube videos",
-    type: "downloader",
-  },
-  async (message, match, m) => {
-    try {
-      match = match || message.reply_message.text;
 
-      if (!match) {
-        await message.reply("Please provide a search query to find YouTube videos.\nExample: `.yts How you like that`");
-        return;
-      }
+rudhra({
+  pattern: 'yts ?(.*)', 
+  fromMe: mode,
+  desc: 'Search for videos on YouTube.',
+  type: 'downloader'
+}, async (message, match, client) => {
+  const query = match;
+  if (!query) {
+    return await message.reply('*Please provide a search query.*');
+  }
 
-      const response = await getJson(eypzApi + `ytdl/search?query=${encodeURIComponent(match)}`);
+  yts(query, async (err, result) => {
+    if (err) {
+      return message.reply('*Error occurred while searching YouTube.*');
+    }
 
-      if (!response || response.results.length === 0) {
-        await message.reply("Sorry, no YouTube videos found for your search query.");
-        return;
-      }
-
-      const formattedMessage = formatYouTubeMessage(response.results);
+    if (result && result.videos.length > 0) {
+      let formattedMessage = '*YouTube Search Results:*\n\n';
+      
+      result.videos.slice(0, 10).forEach((video, index) => {
+        formattedMessage += `*${index + 1}. ${video.title}*\nChannel: ${video.author.name}\nURL: ${video.url}\n\n`;
+      });
 
       const contextInfoMessage = {
         text: formattedMessage,
@@ -294,26 +293,14 @@ rudhra(
                     mediaType: 1,
                     showAdAttribution: true,
                     renderLargerThumbnail: false,
-                    thumbnailUrl: "https://raw.githubusercontent.com/rudhra-prh/media/refs/heads/main/image/yts.png"
+                    thumbnailUrl: "https://raw.githubusercontent.com/rudhraan/media/refs/heads/main/image/yts.png"
           }
         }
       };
 
       await message.client.sendMessage(message.jid, contextInfoMessage);
-
-    } catch (error) {
-      console.error("Error fetching YouTube videos:", error);
-      await message.reply("Error fetching YouTube videos. Please try again later.");
+    } else {
+      await message.reply('*No results found for that query.*');
     }
-  }
-);
-
-function formatYouTubeMessage(videos) {
-  let message = "*YouTube Search Results:*\n\n";
-
-  videos.forEach((video, index) => {
-    message += `*${index + 1},* *Title :* ${video.title}\n   *Duration :* ${video.duration}\n   *Link :* ${video.url}\n\n`;
   });
-
-  return message;
-}
+});
