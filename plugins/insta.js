@@ -10,7 +10,7 @@ rudhra({
     pattern: 'insta ?(.*)',
     fromMe: mode,
     desc: 'Download Instagram Reels',
-    type: 'Downloader'
+    type: 'downloader'
 }, async (message, match, client) => {
     const instaUrl = match || message.reply_message.text;
 
@@ -25,19 +25,18 @@ rudhra({
             return await message.reply('_No media found or invalid URL!_');
         }
 
-        await message.sendMessage(message.jid, "_Uploading..._", { quoted: message.data });
+        await message.reply('_Uploading media...⎙_', { quoted: message.data });
 
         for (let media of resi.data) {
-            await message.client.sendMessage(
-                message.jid,
-                { video: { url: media.url }, // Ensure proper format for sending media
-                mimetype: "video/mp4"},
-                { quoted: message.data }
-            );
+            if (media?.url) {
+                await message.sendFromUrl(media.url, { quoted: message.data });
+            } else {
+                console.warn('Media object missing URL:', media);
+            }
         }
     } catch (error) {
-        console.error('Error fetching media:', error);
-        await message.reply('_Error fetching media!_');
+        console.error('Error fetching or sending media:', error);
+        await message.reply('_Error fetching media!. Please try again later!_');
     }
 });
 
@@ -45,7 +44,7 @@ rudhra({
     pattern: 'story ?(.*)',
     fromMe: mode,
     desc: 'Download Instagram Story',
-    type: 'Downloader'
+    type: 'downloader'
 }, async (message, match, client) => {
     const storyUrl = match || message.reply_message.text;
 
@@ -60,18 +59,17 @@ rudhra({
             return await message.reply('_No media found or invalid URL!_');
         }
 
-        await message.sendMessage(message.jid, "_Uploading..._", { quoted: message.data });
+        await message.reply('_Uploading media...⎙_', { quoted: message.data });
 
         for (let media of resi.data) {
-            await message.client.sendMessage(
-                message.jid,
-                { video: { url: media.url }, // Ensure proper format for sending media
-                mimetype: "video/mp4"},
-                { quoted: message.data }
-            );
+            if (media?.url) {
+                await message.sendFromUrl(media.url, { quoted: message.data });
+            } else {
+                console.warn('Media object missing URL:', media);
+            }
         }
     } catch (error) {
-        console.error('Error fetching media:', error);
-        await message.reply('_Error fetching media!_');
+        console.error('Error fetching or sending media:', error);
+        await message.reply('_Error fetching media!. Please try again later!_');
     }
 });
