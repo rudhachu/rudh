@@ -27,32 +27,10 @@ rudhra({
     if (!userInput) return await message.reply("Please provide a YouTube link.");
     if (!isUrl(userInput)) return await message.reply("Invalid YouTube link. Please provide a valid one.");
 
-    const YtbUrl = userInput.trim();
-    const apiUrls = [
-        `https://api.tioprm.eu.org/download/ytdl?url=${YtbUrl}`,
-        `https://btch.us.kg/download/ytdl?url=${YtbUrl}`,
-        `https://api.tioo.eu.org/download/ytdl?url=${YtbUrl}`,
-        `https://meitang.xyz/download/ytdl?url=${YtbUrl}`
-    ];
-
-    let ytMediaData = null;
-    for (const apiUrl of apiUrls) {
-        try {
-            const response = await axios.get(apiUrl, { timeout: 10000 }); // 10-second timeout
-            if (response.data && response.data.result) {
-                ytMediaData = response.data.result;
-                break; // Exit loop if successful
-            }
-        } catch (error) {
-            console.error(`Error fetching from ${apiUrl}:`, error.message);
-        }
-    }
-
-    if (!ytMediaData) {
-        return await message.reply("Failed to retrieve media from all sources. Please try again later.");
-    }
-
-    const { mp3, mp4, title } = ytMediaData;
+    const videoUrl = userInput.trim();
+    const response = await axios.get(rudhraWebUrl + `api/ytmp4?url=${encodeURIComponent(videoUrl)}`);
+    const { url, title } = response.data;
+    const mp4 = url;
     const optionsText = `*${title}*\n\n *1.* *Video*\n *2.* *Audio*\n *3.* *Document*\n\n*ʀᴇᴘʟʏ ᴡɪᴛʜ ᴀ ɴᴜᴍʙᴇʀ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ*`;
     const contextInfoMessage = {
         text: optionsText,
@@ -60,8 +38,8 @@ rudhra({
             externalAdReply: {
                 title: "𝗬𝗼𝘂𝗧𝘂𝗯𝗲 𝗗𝗼𝘄𝗻𝗹𝗼𝗮𝗱𝗲𝗿",
                 body: "ʀᴜᴅʜʀᴀ ʙᴏᴛ",
-                sourceUrl: YtbUrl,
-                mediaUrl: YtbUrl,
+                sourceUrl: videoUrl,
+                mediaUrl: videoUrl,
                 mediaType: 1,
                 showAdAttribution: true,
                 thumbnailUrl: "https://i.imgur.com/xWzUYiF.png"
@@ -88,19 +66,19 @@ rudhra({
                     { video: { url: mp4 }, mimetype: "video/mp4" },
                     { quoted: message.data }
                 );
-            } else if (userReply === '2' && mp3) {
+            } else if (userReply === '2' && mp4) {
                 // Send audio
                 await client.sendMessage(
                     message.jid,
-                    { audio: { url: mp3 }, mimetype: "audio/mpeg" },
+                    { audio: { url: mp4 }, mimetype: "audio/mpeg" },
                     { quoted: message.data }
                 );
-            } else if (userReply === '3' && mp3) {
+            } else if (userReply === '3' && mp4) {
                 // Send document
                 await client.sendMessage(
                     message.jid,
                     {
-                        document: { url: mp3 },
+                        document: { url: mp4 },
                         mimetype: 'audio/mpeg',
                         fileName: `${title}.mp3`,
                         caption: `_${title}_`
@@ -283,7 +261,7 @@ rudhra({
         const data = await response.json();
 
         // Display download options to the user
-        const optionsText = `*_${data.title}_*\n\n\`\`\`1.\`\`\` *audio*\n\`\`\`2.\`\`\` *video*\n\n_*Send a number as a reply to download*_`;
+        const optionsText = `*_${data.title}_*\n\n *1.* *Video*\n *2.* *Audio*\n *3.* *Document*\n\n*ʀᴇᴘʟʏ ᴡɪᴛʜ ᴀ ɴᴜᴍʙᴇʀ ᴛᴏ ᴅᴏᴡɴʟᴏᴀᴅ*`;
         const contextInfoMessage = {
             text: optionsText,
             contextInfo: {
@@ -303,7 +281,7 @@ rudhra({
 
         const sentMsg = await client.sendMessage(message.jid, contextInfoMessage, { quoted: message.data });
 
-        // Listen for user response (1 for audio, 2 for video)
+        // Listen for user response (1 for video, 2 for audio, 3 for document)
         client.ev.on('messages.upsert', async (msg) => {
             const newMessage = msg.messages[0];
 
@@ -314,6 +292,17 @@ rudhra({
                 const userReply = newMessage.message?.conversation || newMessage.message?.extendedTextMessage?.text;
 
                 if (userReply === '1') {
+                    // Send video file
+                    await client.sendMessage(
+                        message.jid,
+                        {
+                            video: { url: data.url },
+                            mimetype: 'video/mp4',
+                            caption: `*Title:* ${data.title}\n*Duration:* ${data.duration} seconds`
+                        },
+                        { quoted: message.data }
+                    );
+                } else if (userReply === '2') {
                     // Send audio file
                     const externalAdReply = {
                         title: data.title,
@@ -335,17 +324,18 @@ rudhra({
                         },
                         { quoted: message.data }
                     );
-                } else if (userReply === '2') {
-                    // Send video file
-                    await client.sendMessage(
-                        message.jid,
-                        {
-                            video: { url: data.url },
-                            mimetype: 'video/mp4',
-                            caption: `*Title:* ${data.title}\n*Duration:* ${data.duration} seconds`
-                        },
-                        { quoted: message.data }
-                    );
+                } else if (userReply === '3') {
+                // Send document
+                await client.sendMessage(
+                    message.jid,
+                    {
+                        document: { url: data.url },
+                        mimetype: 'audio/mpeg',
+                        fileName: `${data.title}.mp3`,
+                        caption: `_${data.title}_`
+                    },
+                    { quoted: message.data }
+                );
                 } else {
                     await client.sendMessage(message.jid, { text: "Invalid option. Please reply with 1 or 2." });
                 }
