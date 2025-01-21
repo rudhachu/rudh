@@ -70,14 +70,17 @@ if (message.reply_message) { await message.forwardMessage(message.sender, messag
     }
   }
 });
-rudhra({ on: 'text', fromMe: true, dontAddCommandList: true }, async (message, match, client) => { 
-if (message.message.startsWith("°")) { try { 
-let msg = message.message.replace("°", "");
-if (message.reply_message) { await message.forwardMessage(message.sender, message.quoted.data);
+rudhra({ on: 'text', fromMe: true, dontAddCommandList: true }, async (message, match) => {
+  try {
+    if (message.message.startsWith("°")) {
+      let msg = message.message.replace("°", "");
+      if (!message.quoted) { return;
       }
-    } catch (error) {
-      console.error('Error forwarding message:', error);
+      let buff = await message.quoted.download("buffer");
+      return await message.sendFileP(buff);
     }
+  } catch (error) {
+    console.error('Error :', error);
   }
 });
 rudhra(
