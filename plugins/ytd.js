@@ -1,4 +1,4 @@
-const { rudhra, mode } = require("../lib");
+const { rudhra, mode, isUrl } = require("../lib/");
 const yts = require("yt-search");
 const fetch = require("node-fetch");
 
@@ -81,43 +81,59 @@ rudhra({
 });
 
 rudhra({
-  pattern: "song ?(.*)",
-  fromMe: mode,
-  desc: "Search and download audio from YouTube.",
-  type: "downloader",
-}, async (message, match, client) => {
-  if (!match) {
-    return await message.reply("Please provide a search query or YouTube URL.");
-  }
+    pattern: "song ?(.*)",
+    fromMe: mode,
+    desc: "Search and download audio from YouTube.",
+    type: "downloader",
+  }, async (message, match, client) => {
+    try {
+      match = match || message.reply_message?.text;
+      if (!match) {
+        return await message.reply("Please provide a YouTube link or search query.");
+      }
+      
+      let url;
+      if (isUrl(match) && match.includes("youtu")) {
+        url = match;
+      } else {
+        const { videos } = await yts(match);
+        if (videos.length === 0) {
+          return await message.reply("No videos found for your search query.");
+        }
+        url = videos[0].url;
+      }
 
-  try {
-    const { videos } = await yts(match);
-    const firstVideo = videos[0];
-    const url = firstVideo.url;
-    const ytApi = `https://api.siputzx.my.id/api/d/ytmp4?url=${url}`;
+      const ytApi = `https://api.siputzx.my.id/api/d/ytmp4?url=${url}`;
+      const response = await fetch(ytApi);
+      const result = await response.json();
 
-    const response = await fetch(ytApi);
-    const result = await response.json();
-    const data = result.data;
-    const mp3 = data.dl;
-    const title = data.title;
+      if (!result?.data?.dl || !result?.data?.title) {
+        throw new Error("Invalid response from API.");
+      }
 
-        await message.reply(`_Downloading ${title}_`);
-        await message.client.sendMessage(
-            message.jid,
-            { audio: { url: mp3 }, mimetype: 'audio/mp4' },
-            { quoted: message.data }
-          );
-          await message.client.sendMessage(
-            message.jid,
-            { document: { url: mp3 }, mimetype: 'audio/mpeg', fileName: `${title}.mp3`, caption: `_${title}_` },
-            { quoted: message.data }
-          );
+      const { dl: mp3, title } = result.data;
+
+      await message.reply(`_Downloading ${title}_`);
+      await message.client.sendMessage(
+        message.jid,
+        { audio: { url: mp3 }, mimetype: "audio/mpeg" },
+        { quoted: message.data }
+      );
+      await message.client.sendMessage(
+        message.jid,
+        {
+          document: { url: mp3 },
+          mimetype: "audio/mpeg",
+          fileName: `${title}.mp3`,
+          caption: `_${title}_`,
+        },
+        { quoted: message.data }
+      );
     } catch (error) {
-        console.error('Error fetching audio:', error);
-        await message.reply('Failed to download audio. Please try again later.');
+      console.error("Error fetching audio:", error.message);
+      await message.reply("Failed to download audio. Please try again later.");
     }
-});
+ });
 
 rudhra({
   pattern: "video ?(.*)",
@@ -125,32 +141,62 @@ rudhra({
   desc: "Search and download video from YouTube.",
   type: "downloader",
 }, async (message, match, client) => {
+  match = match || message.reply_message.text;
   if (!match) {
-    return await message.reply("Please provide a search query or YouTube URL.");
+    return message.reply('Please provide a YouTube link or search query.');
   }
 
-  try {
-    const { videos } = await yts(match);
-    const firstVideo = videos[0];
-    const url = firstVideo.url;
-    const ytApi = `https://api.siputzx.my.id/api/d/ytmp4?url=${url}`;
+  if (isUrl(match) && match.includes('youtu')) {
+    try {
+      const ytApi = `https://api.siputzx.my.id/api/d/ytmp4?url=${match}`;
+      const response = await fetch(ytApi, { timeout: 10000 }); // 10s timeout
+      if (!response.ok) throw new Error('Failed to fetch from the API.');
+      
+      const result = await response.json();
+      if (!result.data || !result.data.dl || !result.data.title) {
+        throw new Error('Invalid API response.');
+      }
 
-    const response = await fetch(ytApi);
-    const result = await response.json();
-    const data = result.data;
-    const mp4 = data.dl;
-    const title = data.title;
-
-        await message.reply(`_Downloading ${title}_`);
-        await message.client.sendMessage(
-            message.jid,
-            { video: { url: mp4 }, mimetype: 'video/mp4', fileName: `${title}.mp4` },
-            { quoted: message.data }
-        );
+      const { dl: mp4, title } = result.data;
+      await message.reply(`_Downloading ${title}_`);
+      await client.sendMessage(
+        message.jid,
+        { video: { url: mp4 }, mimetype: 'video/mp4', fileName: `${title}.mp4` },
+        { quoted: message.data }
+      );
     } catch (error) {
-        console.error('Error fetching video:', error);
-        await message.reply('Failed to download video. Please try again later.');
+      console.error('Error fetching video:', error);
+      await message.reply('Failed to download video. Please try again later.');
     }
+  } else {
+    try {
+      const { videos } = await yts(match);
+      if (videos.length === 0) {
+        return message.reply('No results found for your query.');
+      }
+      const firstVideo = videos[0];
+      const ytApi = `https://api.siputzx.my.id/api/d/ytmp4?url=${firstVideo.url}`;
+      
+      const response = await fetch(ytApi, { timeout: 10000 });
+      if (!response.ok) throw new Error('Failed to fetch from the API.');
+      
+      const result = await response.json();
+      if (!result.data || !result.data.dl || !result.data.title) {
+        throw new Error('Invalid API response.');
+      }
+
+      const { dl: mp4, title } = result.data;
+      await message.reply(`_Downloading ${title}_`);
+      await client.sendMessage(
+        message.jid,
+        { video: { url: mp4 }, mimetype: 'video/mp4', fileName: `${title}.mp4` },
+        { quoted: message.data }
+      );
+    } catch (error) {
+      console.error('Error fetching video:', error);
+      await message.reply('Failed to download video. Please try again later.');
+    }
+  }
 });
 
 rudhra({
