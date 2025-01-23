@@ -19,7 +19,7 @@ rudhra({
     }
 
     try {
-        let resi = await getJson(`https://api.devstackx.in/v1/igdl?url=${instaUrl}`);
+        let resi = await getJson(`https://api.siputzx.my.id/api/d/igdl?url=${instaUrl}`);
         
         if (!resi || !resi.data || resi.data.length === 0) {
             return await message.reply('_No media found or invalid URL!_');
