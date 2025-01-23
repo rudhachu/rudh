@@ -9,7 +9,7 @@ const fetch = require('node-fetch');
 rudhra({
     pattern: 'insta ?(.*)',
     fromMe: mode,
-    desc: 'Download Instagram Reels.)',
+    desc: 'Download Instagram Reels.',
     type: 'downloader',
 }, async (message, match, client) => {
     try {
@@ -33,7 +33,7 @@ rudhra({
             for (const media of igmedia) {
                 if (counter >= 10) break;
                 const mediaurl = media.url;
-                await message.sendFile(mediaurl);
+                await message.sendFromUrl(mediaurl, { quoted: message.data });
                 counter++;
             }
         } else {
