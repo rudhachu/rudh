@@ -9,34 +9,39 @@ const fetch = require('node-fetch');
 rudhra({
     pattern: 'insta ?(.*)',
     fromMe: mode,
-    desc: 'Download Instagram Reels',
-    type: 'downloader'
+    desc: 'Download Instagram Reels.)',
+    type: 'downloader',
 }, async (message, match, client) => {
-    const instaUrl = match || message.reply_message.text;
-
-    if (!instaUrl) {
-        return await message.reply('_Enter an Instagram URL!_');
-    }
-
     try {
-        let resi = await getJson(`https://api.siputzx.my.id/api/d/igdl?url=${instaUrl}`);
-        
-        if (!resi || !resi.data || resi.data.length === 0) {
-            return await message.reply('_No media found or invalid URL!_');
+        const url = match || message.reply_message.text;
+        if (!url) {
+            return await message.reply("Please provide a valid Instagram URL.");
         }
 
+        const instaApi = `https://api.siputzx.my.id/api/d/igdl?url=${url}`;
+        const res = await fetch(instaApi);
+        if (!res.ok) {
+            return await message.reply("Failed to fetch media. Please try again.");
+        }
         await message.reply('_Uploading media...⎙_', { quoted: message.data });
+        
+        const data = await res.json();
+        const igmedia = data.data;
 
-        for (let media of resi.data) {
-            if (media?.url) {
-                await message.sendFromUrl(media.url, { quoted: message.data });
-            } else {
-                console.warn('Media object missing URL:', media);
+        if (igmedia && igmedia.length > 0) {
+            let counter = 0;
+            for (const media of igmedia) {
+                if (counter >= 10) break;
+                const mediaurl = media.url;
+                await message.sendFile(mediaurl);
+                counter++;
             }
+        } else {
+            await message.reply("No media found for the provided URL.");
         }
     } catch (error) {
-        console.error('Error fetching or sending media:', error);
-        await message.reply('_Error fetching media!. Please try again later!_');
+        console.error(error);
+        await message.reply("An error occurred while processing the request.");
     }
 });
 
