@@ -21,7 +21,7 @@ rudhra({
         const instaApi = `https://api.siputzx.my.id/api/d/igdl?url=${url}`;
         const res = await fetch(instaApi);
         if (!res.ok) {
-            return await message.reply("Failed to fetch media. Please try again.");
+            return await message.reply("Please try again.");
         }
         await message.reply('_Uploading media...⎙_', { quoted: message.data });
         
@@ -33,7 +33,7 @@ rudhra({
             for (const media of igmedia) {
                 if (counter >= 10) break;
                 const mediaurl = media.url;
-                await message.sendFromUrl(mediaurl, { quoted: message.data });
+                await message.sendFile(mediaurl);
                 counter++;
             }
         } else {
@@ -41,7 +41,7 @@ rudhra({
         }
     } catch (error) {
         console.error(error);
-        await message.reply("An error occurred while processing the request.");
+        await message.reply(" 'error' ");
     }
 });
 
