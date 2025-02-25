@@ -24,7 +24,7 @@
   },
   "homepage": "https://github.com/rudhachu/rudh#readme",
   "dependencies": {
-    "@adiwajshing/baileys": "https://github.com/princerudh/Baileys.js",
+    "@adiwajshing/baileys": "https://github.com/princerudh/Baileys",
     "@adiwajshing/keyed-db": "^0.2.4",
     "acrcloud": "^1.4.0",
     "axios": "^1.4.0",
