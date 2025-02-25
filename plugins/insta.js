@@ -1,6 +1,7 @@
 const {
     rudhra,
     getJson,
+    getUrl,
     mode,
     getBuffer
 } = require("../lib/");
@@ -9,39 +10,24 @@ const fetch = require('node-fetch');
 rudhra({
     pattern: 'insta ?(.*)',
     fromMe: mode,
-    desc: 'Download Instagram Reels.',
-    type: 'downloader',
+    desc: 'Download Instagram posts or reels',
+    type: 'downloader'
 }, async (message, match, client) => {
+    match = getUrl(match || message.reply_message.text);
+    if (!match) return await message.reply('*Need an Instagram link!*');
+    
     try {
-        const url = match || message.reply_message.text;
-        if (!url) {
-            return await message.reply("Please provide a valid Instagram URL.");
-        }
-
-        const instaApi = `https://api.siputzx.my.id/api/d/igdl?url=${url}`;
-        const res = await fetch(instaApi);
-        if (!res.ok) {
-            return await message.reply("Please try again.");
-        }
+        const { result, status } = await getJson('https://api-25ca.onrender.com/api/instagram?url=' + match);
+        if (!status || result.length < 1) return await message.reply('*No media found!*');
+        
         await message.reply('_Uploading media...⎙_', { quoted: message.data });
         
-        const data = await res.json();
-        const igmedia = data.data;
-
-        if (igmedia && igmedia.length > 0) {
-            let counter = 0;
-            for (const media of igmedia) {
-                if (counter >= 10) break;
-                const mediaurl = media.url;
-                await message.sendFile(mediaurl);
-                counter++;
-            }
-        } else {
-            await message.reply("No media found for the provided URL.");
+        for (const url of result) {
+            await message.sendFromUrl(url);
         }
     } catch (error) {
         console.error(error);
-        await message.reply(" 'error' ");
+        await message.reply('*Failed to fetch media.*\n_Please try again later._');
     }
 });
 
