@@ -32,7 +32,7 @@ rudhra({
 });
 
 rudhra({
-    pattern: 'story ?(.*)',
+    pattern: 'igstory ?(.*)',
     fromMe: mode,
     desc: 'Download Instagram Story',
     type: 'downloader'
