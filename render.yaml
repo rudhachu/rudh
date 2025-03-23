@@ -1,7 +1,7 @@
 services:
   - type: web
     name: rudhra-bot
-    repo: https://github.com/rudhachu/rdtest.git
+    repo: https://github.com/rudhachu/rudh.git
     branch: main
     env: docker
     dockerfilePath: Dockerfile
