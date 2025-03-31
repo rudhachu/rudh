@@ -1,14 +1,13 @@
 const { rudhra,mode,PREFIX} = require("../lib");
 const config = require("../config");
 
-rudhra(
-  {
+rudhra({
     pattern: "mode ?(.*)",
     fromeMe: true,
     desc: "Change work type",
     type: "user",
-  },
-  async (message, match) => {
+},async (message, match) => {
+  
 if (mode) {
 type = "ᴘʀɪᴠᴀᴛᴇ"
 } else {
