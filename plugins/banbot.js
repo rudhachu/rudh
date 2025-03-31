@@ -9,7 +9,7 @@ rudhra(
   },
   async (message, match) => {
     const status = await getBanStatus(message.jid);
-    let link = `${config.MENU_URL}`;
+    let link = `${config.BOT_INFO.split(";")[2]}`;
     let url = await message.ParseButtonMedia(link);
     
     let data = {
