@@ -14,7 +14,7 @@ type = "Pʀɪᴠᴀᴛᴇ"
 } else {
 type = "Pᴜʙʟɪᴄ"
 }
-let link = `${config.MENU_URL}`;
+let link = `${config.BOT_INFO.split(";")[2]}`;
 let url = await message.ParseButtonMedia(link)
     let data = {
       jid: message.jid,
@@ -40,7 +40,7 @@ let url = await message.ParseButtonMedia(link)
         hasMediaAttachment: true
       },
       footer: {
-        text: "𝙏𝙔𝙋𝙀 : " + type,
+        text: "TYPE : " + type,
       },
       body: {
         text: "",
