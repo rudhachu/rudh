@@ -10,9 +10,9 @@ rudhra(
   },
   async (message, match) => {
 if (mode) {
-type = "Pʀɪᴠᴀᴛᴇ"
+type = "ᴘʀɪᴠᴀᴛᴇ"
 } else {
-type = "Pᴜʙʟɪᴄ"
+type = "ᴘᴜʙʟɪᴄ"
 }
 let link = `${config.BOT_INFO.split(";")[2]}`;
 let url = await message.ParseButtonMedia(link)
@@ -22,25 +22,25 @@ let url = await message.ParseButtonMedia(link)
        {
           type: "reply",
           params: {
-            display_text: "PUBLIC",
+            display_text: "ᴘᴜʙʟɪᴄ",
             id:  `${PREFIX}setvar MODE:public`,
           },
         },
        {
           type: "reply",
           params: {
-            display_text: "PRIVATE",
+            display_text: "ᴘʀɪᴠᴀᴛᴇ",
             id:  `${PREFIX}setvar MODE:private`,
           },
         },
       ],
       header: {
-        title: `${config.BOT_NAME}`,
+        title: `𝗥𝗨𝗗𝗛𝗥𝗔 𝗪𝗢𝗥𝗞 𝗠𝗢𝗗𝗘`,
         subtitle: "",
         hasMediaAttachment: true
       },
       footer: {
-        text: "TYPE : " + type,
+        text: "ᴄᴏʀʀᴇɴᴛ ᴍᴏᴅᴇ : " + type,
       },
       body: {
         text: "",
