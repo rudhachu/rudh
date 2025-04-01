@@ -83,7 +83,7 @@ Description: ${i.desc}\`\`\``);
       menu += `\n║╚═══════════════▸`;
       menu += `\n╚═════════════════◆`;
       menu += `\n\n${config.BOT_NAME}`;
-      return await  message.send(menu, {
+      return await message.send(menu, {
     contextInfo: {
 externalAdReply: {
                     title: config.LINK_PREVIEW.split(";")[0],
