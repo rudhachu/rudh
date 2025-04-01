@@ -23,6 +23,7 @@ rudhra({
     fromMe: mode,
     dontAddCommandList: true
 }, async (message, match) => {
+const readMore = String.fromCharCode(8206).repeat(4001);
     if (match) {
       for (let i of commands) {
         if (
@@ -39,21 +40,19 @@ Description: ${i.desc}\`\`\``);
       let [date, time] = new Date()
         .toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })
         .split(",");
-      let menu = `╔════════════════════•
-║╔═════════════════◉
-║║   *User* : ${message.pushName}
-║║   *Bot Name* : ${config.BOT_NAME} 
-║║   *Version*  : ${version}
-║║   *Mode*  : ${config.MODE}
-║║   *Prefix* : ${PREFIX}
-║║   *Server* : ${hostname().split("-")[0]}
-║║   *Date* : ${date}
-║║   *Comments* : ${commands.length} 
-║║
-║║      █║▌║▌║║▌║ █
-║║       ʀ   ᴜ   ᴅ   ʜ   ʀ   ᴀ
-║╚═════════════════◉
-╚════════════════════•\n`;
+      let menu = `                                                             
+        Hey 👋   ${message.pushName}
+        *Bot Name*  :  ${config.BOT_NAME} 
+        *Version*   :   ${version}
+        *Prefix*   :   ${PREFIX}
+        *Mode*   :   ${config.MODE}
+        *Server*  :   ${hostname().split("-")[0]}
+        *Date*    :    ${date}
+        *Commands*   :   ${commands.length}
+                  
+                █║▌║▌║║▌║ █
+                 ʀ   ᴜ   ᴅ   ʜ   ʀ   ᴀ
+                                                             \n\n ${readMore}`;
       let cmnd = [];
       let cmd;
       let category = [];
@@ -72,16 +71,15 @@ Description: ${i.desc}\`\`\``);
       });
       cmnd.sort();
       category.sort().forEach((cmmd) => {
-        menu += `╔═══❮ *${cmmd.toUpperCase()}* ❯═══◆`;
-        menu += `║╔═══════════════▸`;
-        menu += `\n║║`;
+        menu += `\n         ❮ *${cmmd.toUpperCase()}* ❯         `;
+        menu += `\n      `;
         let comad = cmnd.filter(({ type }) => type == cmmd);
         comad.forEach(({ cmd }) => {
-          menu += `\n║║▸  ${cmd.trim()} `;
+          menu += `\n      •  ${cmd.trim()} `;
         });
-        menu += `\n║║`;
-      menu += `\n║╚═══════════════▸`;
-      menu += `\n╚═════════════════◆`;
+        menu += `\n\n      `;
+      menu += `\n                                                `;
+        });
       menu += `\n\n${config.BOT_NAME}`;
       return await message.send(menu, {
     contextInfo: {
